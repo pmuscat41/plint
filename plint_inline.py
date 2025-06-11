@@ -33,7 +33,15 @@ def plint_main():
     import copy
     from itertools import chain, combinations
     import json
-    
+    def plint_main():
+    import argparse, csv, sys, os, re, copy
+    from itertools import chain, combinations
+    import json
+
+    number_of_warnings = 0
+    dav_keywords = set()
+
+       
     parser = argparse.ArgumentParser(description="patent claim proofreader and analyzer: checks patent claims for antecedent basis, 112(b), 112(d), 112(f), restrictions, and other issues")
     parser.add_argument("claims", help="claims file to read", nargs='?', default=None)
     parser.add_argument("-a", "--ant-basis", action="store_true", help="check for antecedent basis issues", default=False)
