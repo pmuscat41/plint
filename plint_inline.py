@@ -400,7 +400,10 @@ def plint_main():
             csv_reader = csv.reader(warnings_csv_file, delimiter=",")
             
             for row in csv_reader:
-                assert len(row) == 2, "The warnings file should have two columns. This line does not: "+row[0]
+                if len(row) < 2:
+                    continue  # Skip empty or invalid lines
+                assert len(row) == 2, "The warnings file should have two columns. This line does not: " + str(row)
+
     
         with open(file_to_load, 'r', encoding="ascii") as warnings_csv_file:
             warnings_csv = csv.DictReader(warnings_csv_file, delimiter=",")
@@ -1564,10 +1567,11 @@ def run_plint(claims_text, *args):
     fake_claims = 'claims.txt'
     fake_warnings = 'claims.csv'
     files = {
-        fake_claims: io.StringIO(claims_text),
-        fake_claims + '.marked': io.StringIO(),
-        fake_warnings: io.StringIO(CLAIMS_WARNINGS_CSV),
-    }
+        'claims.txt': io.StringIO(claims_text),
+        'claims.txt.marked': io.StringIO(),
+        'claims.csv': io.StringIO(CLAIMS_WARNINGS_CSV.strip()),  # ← this line
+}
+
 
     real_open = open
     real_isfile = os.path.isfile
