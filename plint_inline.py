@@ -1604,6 +1604,7 @@ def run_plint(claims_text, *args):
             warnings.simplefilter('ignore', SyntaxWarning)
             try:
                 exec(PLINT_SOURCE, global_ns)
+                global_ns['plint_main']()
             except SystemExit:
                 pass
     return out_buf.getvalue() + err_buf.getvalue()
