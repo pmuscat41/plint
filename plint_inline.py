@@ -293,12 +293,11 @@ def plint_main():
                 broke = False
                 if not(res_alls is None):
                     for res_all in res_alls:
-                        # Ignore all the instances identified in done_starts.
                         if not(res_all.start() in done_starts):
-                            #print(res_all.group())
-                            claim_text = claim_text[0:res_all.start()]+"{"+claim_text[res_all.start():]
-                            #print(claim_text)
-                            broke = True # That is, broke out of this stage of the loop. Then this needs to iterate as the locations changed?
+                            if res_all.start() > 0 and claim_text[res_all.start() - 1] in "{[":
+                                continue
+                            claim_text = claim_text[0:res_all.start()] + "{" + claim_text[res_all.start():]
+                            broke = True
                             break
                     if broke:
                         continue
