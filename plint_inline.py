@@ -33,11 +33,10 @@ def plint_main():
     import copy
     from itertools import chain, combinations
     import json
-    def plint_main():
-    import argparse, csv, sys, os, re, copy
-    from itertools import chain, combinations
-    import json
+    
 
+    global number_of_warnings
+    global dav_keywords
     number_of_warnings = 0
     dav_keywords = set()
 
