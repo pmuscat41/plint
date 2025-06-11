@@ -1562,7 +1562,6 @@ regex,message
 """
 
 def run_plint(claims_text, *args):
-    """Execute plint on the provided claims text and return the output string."""
     fake_claims = 'claims.txt'
     fake_warnings = 'claims.csv'
     files = {
@@ -1587,9 +1586,7 @@ def run_plint(claims_text, *args):
         return real_open(path, mode, *a, **k)
 
     def patched_isfile(path):
-        if path in files:
-            return True
-        return real_isfile(path)
+        return path in files
 
     out_buf = io.StringIO()
     err_buf = io.StringIO()
@@ -1597,20 +1594,19 @@ def run_plint(claims_text, *args):
 
     with mock.patch('builtins.open', patched_open), \
          mock.patch('os.path.isfile', patched_isfile), \
-         mock.patch('sys.argv', ['plint.py', fake_claims]), \
+         mock.patch('sys.argv', ['plint.py', fake_claims, '-a']), \
          redirect_stdout(out_buf), redirect_stderr(err_buf):
         import warnings
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', SyntaxWarning)
             try:
                 exec(PLINT_SOURCE, global_ns)
-                global_ns['plint_main']()
+                global_ns['plint_main']()  # 👈 REQUIRED
             except SystemExit:
                 pass
     return out_buf.getvalue() + err_buf.getvalue()
 
-
-def main(arg1: str) -> dict:
+def main(arg1: str, **kwargs) -> dict:
     result = run_plint(arg1)
     return {
         "result": result
