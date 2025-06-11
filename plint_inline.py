@@ -291,16 +291,21 @@ def plint_main():
                 
                 # If the or said is not before the plural starting term, mark the plural starting term.
                 broke = False
+
                 if not(res_alls is None):
                     for res_all in res_alls:
                         if not(res_all.start() in done_starts):
                             if res_all.start() > 0 and claim_text[res_all.start() - 1] in "{[":
                                 continue
+                            if claim_text[res_all.start():res_all.start()+1] in ('{', '['):
+                                continue  # Already marked, skip
                             claim_text = claim_text[0:res_all.start()] + "{" + claim_text[res_all.start():]
                             broke = True
                             break
                     if broke:
                         continue
+            
+                             
                 
                 plural_starting_term_not_marked = False
         
