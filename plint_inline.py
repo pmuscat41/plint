@@ -1609,8 +1609,8 @@ def run_plint(claims_text, *args):
     return out_buf.getvalue() + err_buf.getvalue()
 
 
-    def main(arg1: str) -> dict:
-        result = run_plint(arg1)
-        return {
-            "result": result
-        }
+def main(arg1: str) -> dict:
+    result = run_plint(arg1)
+    return {
+        "result": result
+    }
