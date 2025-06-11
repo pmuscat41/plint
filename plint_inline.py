@@ -390,25 +390,26 @@ def plint_main():
         "powerset([1,2,3]) --> () (1,) (2,) (3,) (1,2) (1,3) (2,3) (1,2,3)"
         s = list(iterable)  # allows duplicate elements
         return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
-    
+
     def load_warnings_file(file_to_load):
-    file_to_load = file_to_load.strip()
-    warnings = []
+        file_to_load = file_to_load.strip()
+        warnings = []
+    
+        # Read CSV content once, avoiding reopened or closed files
+        with open(file_to_load, 'r', encoding='ascii') as f:
+            reader = csv.reader(f)
+            rows = list(reader)
+    
+        for row in rows:
+            if len(row) < 2:
+                continue
+            if row[0].startswith('#'):
+                continue
+            warnings.append({'regex': row[0], 'message': row[1]})
+    
+        print(f"{len(warnings)} warnings loaded from {file_to_load}")
+        return warnings
 
-    # Use a single open/read block
-    with open(file_to_load, 'r', encoding='ascii') as f:
-        reader = csv.reader(f)
-        rows = list(reader)
-
-    for row in rows:
-        if len(row) < 2:
-            continue
-        if row[0].startswith('#'):
-            continue
-        warnings.append({'regex': row[0], 'message': row[1]})
-
-    print(f"{len(warnings)} warnings loaded from {file_to_load}")
-    return warnings
 
     
     if args.legal:
