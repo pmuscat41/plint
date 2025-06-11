@@ -392,43 +392,24 @@ def plint_main():
         return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
     
     def load_warnings_file(file_to_load):
-        # Opening CSV file.
-        # Needs to be "MS-DOS" format, not UTF-8. For some reason the really old version of Python the USPTO has doesn't like Unicode CSV files.
-    
-        # Check that it only has two columns first.
-        with open(file_to_load, 'r', encoding="ascii") as warnings_csv_file:
-            csv_reader = csv.reader(warnings_csv_file, delimiter=",")
-            
-            for row in csv_reader:
-                if len(row) < 2:
-                    continue  # Skip empty or invalid lines
-                assert len(row) == 2, "The warnings file should have two columns. This line does not: " + str(row)
+    file_to_load = file_to_load.strip()
+    warnings = []
 
-    
-        with open(file_to_load, 'r', encoding="ascii") as warnings_csv_file:
-            warnings_csv = csv.DictReader(warnings_csv_file, delimiter=",")
-            warnings = []
-            prev_regex = ''
-            line_num = 1
-            warnings_commented_out = 0
-            for warning in warnings_csv:
-                if args.force:
-                    if warning['regex'].startswith('#'):
-                        warning['regex'] = warning['regex'][1:]
-                
-                if not warning['regex'].startswith('#'):
-                    assert warning['regex'] != prev_regex, "Duplicate regex in warnings file: {}".format(warning['regex'])
-                    prev_regex = warning['regex']
-                    warnings.append(warning)
-                    line_num += 1
-                    if args.debug:
-                        print("Reading from warnings file:", line_num, warning['regex'])
-                else:
-                    warnings_commented_out += 1
-            
-            print("{} warnings loaded from {}, {} suppressed.\n".format(len(warnings), file_to_load, warnings_commented_out))
-        
-        return warnings
+    # Use a single open/read block
+    with open(file_to_load, 'r', encoding='ascii') as f:
+        reader = csv.reader(f)
+        rows = list(reader)
+
+    for row in rows:
+        if len(row) < 2:
+            continue
+        if row[0].startswith('#'):
+            continue
+        warnings.append({'regex': row[0], 'message': row[1]})
+
+    print(f"{len(warnings)} warnings loaded from {file_to_load}")
+    return warnings
+
     
     if args.legal:
         print("Copyright 2022 Ben Trettel. plint is licensed under the GNU Affero General Public License v3.0, a copy of which has been provided with the software. The license is also available online: https://www.gnu.org/licenses/agpl-3.0.en.html\n")
