@@ -517,7 +517,7 @@ def plint_main():
         args.ant_basis = True
     
     if args.claims_warnings is None:
-        args.claims_warnings = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'claims'+file_ext)
+        args.claims_warnings = 'claims.csv'
     
     if not args.claims_warnings.endswith(file_ext):
         eprint('Warnings file must be a {} file:'.format(file_ext), args.claims_warnings)
@@ -536,8 +536,7 @@ def plint_main():
     # Set the use_outfile after checking that the file exists, otherwise, if the claims file doesn't exist, the error message will be printed to the output file.
     use_outfile = args.outfile
     if use_outfile:
-        outfile = args.claims+'.out'
-        open(outfile, 'w').close()
+        use_outfile = False
     
     prev_claim_number      = 0
     number_of_claims       = 0
